@@ -27,12 +27,24 @@ struct endpoint {
 	int d_latency;
 	vector<ecache> ecaches;
 	vector<request> requests;
+	int total_requests;
 };
 
 vector<int> videos;
 vector<cache> caches;
 vector<endpoint> endpoints;
 
+bool sort_cache(ecache & a, ecache & b) {
+	return a.latency < b.latency;
+}
+
+bool sort_request(request & a, request & b) {
+	return a.nrequest < b.nrequest;
+}
+
+bool sort_endpoints(endpoint & a, endpoint & b) {
+	return a.total_requests < b.total_requests;
+}
 
 void resolve() {
 	for (size_t e = 0; e < endpoints.size(); e++) {
@@ -97,6 +109,7 @@ int main(int argc, char ** argv) {
 	for (size_t i = 0; i < E; i++) {
 		int K;
 		endpoint tmp;
+		tmp.total_requests = 0;
 		cin >> tmp.d_latency;
 		cin >> K;
 		for (size_t i = 0; i < K; i++) {
@@ -105,6 +118,7 @@ int main(int argc, char ** argv) {
 			cin >> tmp2.latency;
 			tmp.ecaches.push_back(tmp2);
 		}
+		sort(tmp.ecaches.begin(), tmp.ecaches.end(), sort_cache);
 		endpoints.push_back(tmp);
 	}
 
@@ -116,6 +130,15 @@ int main(int argc, char ** argv) {
 		tmp.video_id = RV;
 		tmp.nrequest = RN;
 		endpoints[RE].requests.push_back(tmp);
+		endpoints[RE].total_requests += RN;
+	}
+
+	// S endpoints
+	sort(endpoints.begin(), endpoints.end(), sort_endpoints);
+
+	// S request
+	for (size_t i = 0; i < E; i++) {
+		sort(endpoints[i].requests.begin(), endpoints[i].requests.end(), sort_request);
 	}
 
 	resolve();
