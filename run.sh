@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXEC="google"
+EXEC="google.out"
 CODE="$EXEC.cpp"
 COMMAND="time"
 
